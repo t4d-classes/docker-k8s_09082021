@@ -16,10 +16,10 @@ docker build -t ubuntu-nginx-php-demo .
 docker run -d -p 80:80 --name demo1 ubuntu-nginx-php-demo
 ```
 
-4. Using the IP address of your Linux virtual machine, view the web site running in the container.
+4. Using the host name of your Linux virtual machine, view the web site running in the container. Update the `student0` part to your machine.
 
 ```bash
-http://YOUR_LINUX_IP_ADDRESS
+http://student0.databots.cloud
 ```
 
 5. Let's stop the running container.
