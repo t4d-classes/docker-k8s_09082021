@@ -1,4 +1,4 @@
-# Welcome to Angular State Management and Unit Testing Class
+# Welcome to Containerization with Docker and Kubernetes
 
 ![Accelebrate Logo](images/accelebrate-logo.png "Accelebrate Logo")
 

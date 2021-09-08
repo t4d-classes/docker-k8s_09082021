@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  proxy:
+    build: nginx-proxy/.
+    ports:
+      - "80:80"
+    networks:
+      - my-app
+  www1:
+    build: node-app1/.
+    networks:
+      my-app:
+        aliases:
+          - app1
+  www2:
+    build: node-app2/.
+    networks:
+      - my-app    
+
+networks:
+  my-app:
+
+  
