@@ -4,10 +4,6 @@
 
 ### Download
 
-#### Documentation
-
-- [Docker Pull](https://docs.docker.com/engine/reference/commandline/pull/)
-
 #### Commands
 
 Download a Docker Image
@@ -21,6 +17,10 @@ docker pull postgres
 ```bash
 docker pull postgres:12.5-alpine
 ```
+
+#### Documentation
+
+- [Docker Pull](https://docs.docker.com/engine/reference/commandline/pull/)
 
 ## Containers
 
