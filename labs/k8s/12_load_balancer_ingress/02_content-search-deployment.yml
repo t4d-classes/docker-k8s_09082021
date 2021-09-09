@@ -1,0 +1,159 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-deployment
+  labels:
+    app: content-search-app
+spec:
+  selector:
+    matchLabels:
+      pod: mongo-pod
+  template:
+    metadata:
+      labels:
+        app: content-search-app
+        pod: mongo-pod
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:5.0.2
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - mountPath: /data
+              subPath: db
+              name: mongo-vol
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: root
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: dbpass
+      volumes:
+        - name: mongo-vol
+          persistentVolumeClaim:
+            claimName: mongo-pv-claim
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-express-deploymeent
+  labels:
+    app: content-search-app
+spec:
+  selector:
+    matchLabels:
+      pod: mongo-express-pod
+  template:
+    metadata:
+      labels:
+        app: content-search-app
+        pod: mongo-express-pod
+    spec:
+      containers:
+        - name: mongo-express
+          image: mongo-express:0.54.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081
+          env:
+            - name: ME_CONFIG_MONGODB_ADMINUSERNAME
+              value: root
+            - name: ME_CONFIG_MONGODB_ADMINPASSWORD
+              value: dbpass
+            - name: ME_CONFIG_MONGODB_URL
+              value: mongodb://root:dbpass@mongo:27017/
+      volumes:
+        - name: mongodb
+          persistentVolumeClaim:
+            claimName: mongo-pv-claim
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  labels:
+    app: content-search-app
+spec:
+  selector:
+    matchLabels:
+      pod: redis-pod
+  template:
+    metadata:
+      labels:
+        app: content-search-app
+        pod: redis-pod
+    spec:
+      containers:
+        - name: redis
+          image: redis:6.2.5-alpine
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - mountPath: /data
+              name: redis-vol
+      volumes:
+        - name: redis-vol
+          persistentVolumeClaim:
+            claimName: redis-pv-claim
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-insight-deployment
+  labels:
+    app: content-search-app
+spec:
+  selector:
+    matchLabels:
+      pod: redis-insight-pod
+  template:
+    metadata:
+      labels:
+        app: content-search-app
+        pod: redis-insight-pod
+    spec:
+      containers:
+        - name: redis-insight
+          image: redislabs/redisinsight:1.10.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8001
+          volumeMounts:
+            - mountPath: /db
+              name: redis-vol
+      volumes:
+        - name: redis-vol
+          persistentVolumeClaim:
+            claimName: redis-insight-pv-claim
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+  labels:
+    app: content-search-app
+spec:
+  selector:
+    matchLabels:
+      pod: web-pod
+  template:
+    metadata:
+      labels:
+        app: content-search-app
+        pod: web-pod
+    spec:
+      containers:
+        - name: content-search-web
+          image: localhost:32000/content-search-web
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: TrainingContentCatalog_ConnectionStrings__TrainingCatalogDbServer
+              value: mongodb://root:dbpass@mongo:27017
+            - name: TrainingContentCatalog_ConnectionStrings__TrainingCatalogCacheServer
+              value: redis:6379
