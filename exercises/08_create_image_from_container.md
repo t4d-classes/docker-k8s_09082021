@@ -13,7 +13,7 @@
 
 4. Log into the container, then run the following command.
 
-```bash
+```bashexit
 /bin/bash /opt/build.sh
 ```
 
