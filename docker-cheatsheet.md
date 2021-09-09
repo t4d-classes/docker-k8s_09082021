@@ -171,7 +171,81 @@ docker rm -f CONTAINER_NAME
 
 - [Docker Remove Container Command](https://docs.docker.com/engine/reference/commandline/rm/)
 
+### Run Docker Containers in Interactive Mode
 
+Docker Run Interactive Command
+
+```bash
+docker run -it --name CONTAINER_NAME IMAGE_NAME COMMAND
+```
+
+**Documentation**
+
+- [Docker Run Interactive Command](https://docs.docker.com/engine/reference/commandline/run/#assign-name-and-allocate-pseudo-tty---name--it)
+
+### Run a Command in a Running Container
+
+Docker Exec Command
+
+```bash
+docker exec CONTAINER_NAME COMMAND
+```
+
+Docker Exec Interactive Command
+
+```bash
+docker exec -it CONTAINER_NAME COMMAND
+```
+
+**Documentation**
+
+- [Docker Exec Command](https://docs.docker.com/engine/reference/commandline/exec/)
+
+### Docker Logs
+
+Docker Logs Command
+
+```bash
+docker logs CONTAINER_NAME
+```
+
+**Documentation**
+
+- [Docker Logs Command](https://docs.docker.com/engine/reference/commandline/logs/)
+
+### Copy Files Between the Host and Container
+
+Docker Copy Command
+
+```bash
+docker cp LOCAL_FILE CONTAINER_NAME:CONTAINER_PATH
+```
+
+```bash
+docker cp CONTAINER_NAME:CONTAINER_PATH LOCAL_FILE
+```
+
+**Documentation**
+
+- [Docker Copy Command](https://docs.docker.com/engine/reference/commandline/cp/)
+
+### Create an Image from a Container
+
+Docker Create Container Command
+
+```bash
+docker container create --name CONTAINER_NAME IMAGE_NAME
+```
+
+Docker Commit Command
+
+```bash
+docker commit CONTAINER_NAME IMAGE_NAME
+```
+
+**Documentation**
+
+- [Docker Commit Command](https://docs.docker.com/engine/reference/commandline/commit/)
 
 ## Volumes
 
