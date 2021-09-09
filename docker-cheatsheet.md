@@ -10,15 +10,15 @@
 
 #### Commands
 
-```bash postgres
-# Download a Docker Image
+Download a Docker Image
 
-docker pull <IMAGE_NAME>
+```bash 
+docker pull postgres
 ```
 
-```bash
-# Download a tagged Docker Image
+ Download a tagged Docker Image
 
+```bash
 docker pull postgres:12.5-alpine
 ```
 
