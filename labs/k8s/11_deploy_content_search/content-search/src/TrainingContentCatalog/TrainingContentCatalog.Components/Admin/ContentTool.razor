@@ -1,0 +1,545 @@
+@using System.Linq
+@using GridAction = Syncfusion.Blazor.Grids.Action;
+
+@using TrainingContentCatalog.Common
+@using TrainingContentCatalog.Models
+
+@inject IJSRuntime JS;
+@inject IContentManager contentManager;
+
+<h2>Manage Content</h2>
+
+<div id="content-items-datagrid-container">
+
+  <SfGrid DataSource="@contentItems" AllowPaging="true" @ref="contentItemsGrid"
+    Toolbar="@(new List<string>() { "Add", "Edit", "Delete" })">
+    <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler"
+      TValue="ContentItem"></GridEvents>
+    <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true"
+      Mode="EditMode.Dialog" Dialog="dialogParams" ShowDeleteConfirmDialog="true">
+      <HeaderTemplate>
+        @{
+          var contentItem = context as ContentItem;
+        }
+
+        @if (contentItem.Id is null)
+        {
+          <span>New Content Item</span>          
+        }
+        else
+        {
+          <span>@contentItem.Title - @contentItem.Author?.FullName - @contentItem.Publisher?.Name</span>
+        }
+      </HeaderTemplate>
+      <Template>
+        <div>
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <SfTextBox ID="ContentItemFormTitle" @bind-Value="@(contentItemForm.Title)"
+                FloatLabelType="FloatLabelType.Always" Placeholder="Title"></SfTextBox>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <SfTextBox ID="ContentItemFormUrl" @bind-Value="@(contentItemForm.Url)"
+                Multiline="true"
+                FloatLabelType="FloatLabelType.Always" Placeholder="Url"></SfTextBox>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <SfDropDownList ID="ContentItemFormAuthor" TValue="string" TItem="AuthorForm"
+                @ref="authorDropDownList"
+                DataSource="@authors" Value="@(contentItemForm.AuthorId)"
+                ValueChanged="@(authorId => {
+                  if (authorId == "<new author>")
+                  {
+                    newAuthorFormVisible = true;
+                  }
+                  else
+                  {
+                    newAuthorFormVisible = false;
+                    contentItemForm.AuthorId = authorId;
+                  }
+                })"
+                FloatLabelType="FloatLabelType.Always" Placeholder="Author">
+                <DropDownListFieldSettings Value="Id" Text="FullName"></DropDownListFieldSettings>
+              </SfDropDownList>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <SfTextBox ID="ContentItemFormDescription" @bind-Value="@(contentItemForm.Description)"
+                Multiline="true"
+                FloatLabelType="FloatLabelType.Always" Placeholder="Description"></SfTextBox>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <SfDropDownList ID="ContentItemFormPublisher" TValue="string" TItem="PublisherForm"
+                @ref="publisherDropDownList"
+                DataSource="@publishers" Value="@(contentItemForm.PublisherId)"
+                ValueChanged="@(publisherId => {
+                  if (publisherId == "<new publisher>")
+                  {
+                    newPublisherFormVisible = true;
+                  }
+                  else
+                  {
+                    newPublisherFormVisible = false;
+                    contentItemForm.PublisherId = publisherId;
+                  }
+                })"
+                FloatLabelType="FloatLabelType.Always" Placeholder="Publisher">
+                <DropDownListFieldSettings Value="Id" Text="Name"></DropDownListFieldSettings>
+              </SfDropDownList>
+            </div>
+            <div class="form-group col-md-3">
+              <SfDatePicker ID="ContentItemFormPublishDate" @bind-Value="@(contentItemForm.PublishDate)"
+                FloatLabelType="FloatLabelType.Always" Placeholder="Publish Date">
+              </SfDatePicker>
+            </div>
+            <div class="form-group col-md-3">
+              <SfComboBox ID="ContentItemFormFormat" TValue="string" TItem="string"
+                DataSource="@formats" @bind-Value="@(contentItemForm.Format)"
+                FloatLabelType="FloatLabelType.Always" Placeholder="Format"
+                AllowCustom="true">
+              </SfComboBox>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-10">
+              <SfMultiSelect ID="ContentItemFormTags" TValue="List<Tag>" TItem="Tag"
+                @bind-Value="@(contentItemForm.Tags)" DataSource="@tags"
+                AllowCustomValue="true" Mode="@VisualMode.Box"
+                Label="Tags" Placeholder="Select tags">
+                  <MultiSelectFieldSettings Text="Name" Value="Value"></MultiSelectFieldSettings>
+                </SfMultiSelect>
+            </div>
+            <div class="form-group col-md-2">
+              <SfCheckBox ID="ContentItemFormActive" @bind-Checked="@(contentItemForm.Active)"
+                Label="Active" FloatLabelType="FloatLabelType.Always"></SfCheckBox>
+            </div>
+          </div>
+
+        </div>
+      </Template>
+
+
+    </GridEditSettings>
+    
+    <GridColumns>
+      <GridColumn Field="@nameof(ContentItem.Title)" HeaderText="Title" IsPrimaryKey="true"
+        Width="35%">
+        <Template>
+          @{
+            var contentItem = context as ContentItem;
+          }
+
+          @if (contentItem.Url is null)
+          {
+            <span>@contentItem.Title</span>
+          }
+          else
+          {
+            <a href="@contentItem.Url" rel="noreferrer" target="_blank">
+              @contentItem.Title
+              <span class="e-icons e-open-link"></span>
+            </a>
+          }
+        </Template>
+      </GridColumn>
+      <GridColumn HeaderText="Author" Width="20%">
+        <Template>
+          @{
+            var contentItem = context as ContentItem;
+          }
+
+          @if (contentItem.Author is null)
+          {
+            <span>No Author</span>
+          }
+          else
+          {
+            @if (contentItem.Author.Url is null)
+            {
+              <span>@contentItem.Author.LastName, @contentItem.Author.FirstName</span>
+            }
+            else
+            {
+              <a href="@contentItem.Author.Url" rel="noreferrer" target="_blank">
+                @contentItem.Author.LastName, @contentItem.Author.FirstName
+                <span class="e-icons e-open-link"></span>
+              </a>
+            }
+          }
+        </Template>    
+      </GridColumn>
+      <GridColumn HeaderText="Publisher" Width="20%">
+        <Template>
+          @{
+            var contentItem = context as ContentItem;
+          }
+
+          @if (contentItem.Publisher is null)
+          {
+            <span>No Publisher</span>
+          }
+          else
+          {
+            @if (contentItem.Publisher.Url is null)
+            {
+              <span>@contentItem.Publisher.Name</span>
+            }
+            else
+            {
+              <a href="@contentItem.Publisher.Url" rel="noreferrer" target="_blank">
+                @contentItem.Publisher.Name
+                <span class="e-icons e-open-link"></span>
+              </a>
+            }
+          }
+        </Template>      
+      </GridColumn>
+      <GridColumn Field="@nameof(ContentItem.PublishDate)" HeaderText="Date Published"
+        Type="ColumnType.Date" TextAlign="TextAlign.Center" Width="15%">
+        <Template>
+          @{ 
+            var contentItem = context as ContentItem; 
+            <span>@contentItem.PublishDate.ToString("MM-dd-yyyy")</span> 
+          } 
+        </Template>
+      </GridColumn>
+      <GridColumn HeaderText="Active" TextAlign="TextAlign.Center" Width="10%">
+        <Template>
+          @{
+            var contentItem = context as ContentItem;
+          }
+
+          @if (contentItem.Active)
+          {
+            <span class="e-icons .e-content-item-icons e-content-item-active"></span>
+          }
+          else 
+          {
+            <span class="e-icons .e-content-item-icons e-content-item-inactive"></span>
+          }
+        </Template>
+      </GridColumn>
+    </GridColumns>
+    <SfSpinner Size="40" Type="SpinnerType.Bootstrap4" @bind-Visible="@busy"></SfSpinner>
+  </SfGrid>
+
+  <SfDialog Width="600" ShowCloseIcon="true" @bind-Visible="newAuthorFormVisible" IsModal="true">
+    <DialogTemplates>
+        <Header>New Author</Header>
+        <Content>
+          <div>
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <SfTextBox ID="NewAuthorFormFirstName" @bind-Value="@(newAuthorForm.FirstName)"
+                  FloatLabelType="FloatLabelType.Always" Placeholder="First Name"></SfTextBox>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <SfTextBox ID="NewAuthorFormLastName" @bind-Value="@(newAuthorForm.LastName)"
+                  FloatLabelType="FloatLabelType.Always" Placeholder="Last Name"></SfTextBox>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <SfTextBox ID="NewAuthorFormUrl" @bind-Value="@(newAuthorForm.Url)"
+                  FloatLabelType="FloatLabelType.Always" Placeholder="Url"></SfTextBox>
+              </div>
+            </div>
+          </div>
+        </Content>
+    </DialogTemplates>
+    <DialogEvents OnOpen="@BeforeNewAuthorDialogOpen"></DialogEvents>
+    <DialogButtons>
+        <DialogButton IsPrimary="true" Content="Save" OnClick="SaveNewAuthor" />
+        <DialogButton IsPrimary="false" Content="Cancel" OnClick="CancelNewAuthor" />
+    </DialogButtons>
+  </SfDialog>
+
+  <SfDialog Width="600" ShowCloseIcon="true" @bind-Visible="newPublisherFormVisible" IsModal="true">
+    <DialogTemplates>
+        <Header>New Publisher</Header>
+        <Content>
+          <div>
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <SfTextBox ID="NewPublisherFormName" @bind-Value="@(newPublisherForm.Name)"
+                  FloatLabelType="FloatLabelType.Always" Placeholder="Name"></SfTextBox>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-12">
+                <SfTextBox ID="NewPublisherFormUrl" @bind-Value="@(newPublisherForm.Url)"
+                  FloatLabelType="FloatLabelType.Always" Placeholder="Url"></SfTextBox>
+              </div>
+            </div>
+          </div>
+        </Content>
+    </DialogTemplates>
+    <DialogEvents OnOpen="@BeforeNewPublisherDialogOpen"></DialogEvents>
+    <DialogButtons>
+        <DialogButton IsPrimary="true" Content="Save" OnClick="SaveNewPublisher" />
+        <DialogButton IsPrimary="false" Content="Cancel" OnClick="CancelNewPublisher" />
+    </DialogButtons>
+  </SfDialog>
+
+
+</div>
+
+@code {
+
+  private List<string> selectedTags { get; set; } = new() {
+    "c#", ".net", "programming"
+  };
+
+
+  private SfGrid<ContentItem> contentItemsGrid;
+  private SfDropDownList<string, AuthorForm> authorDropDownList;
+  private SfDropDownList<string, PublisherForm> publisherDropDownList;
+
+  private DialogSettings dialogParams = new DialogSettings { MinHeight = "600px", Width = "800px" };
+  private bool busy = false;
+  private bool newAuthorFormVisible = false;
+  private bool newPublisherFormVisible = false;
+
+  private List<ContentItem> contentItems { get; set; } = new();
+  private List<PublisherForm> publishers { get; set; } = new();
+  private List<AuthorForm> authors { get; set; } = new();
+  private List<string> formats { get; set; } = new();
+  private List<Tag> tags { get; set; } = new();
+  private ContentItemForm contentItemForm { get; set; }
+  private AuthorForm newAuthorForm { get; set; } = new();
+  private PublisherForm newPublisherForm { get; set; } = new();
+
+  protected override async Task OnInitializedAsync()
+  {
+    contentItems = (await contentManager.All()).ToList();
+  }
+
+  public void BeforeNewAuthorDialogOpen()
+  {
+    newAuthorForm = new();
+  }
+
+  public void SaveNewAuthor()
+  {
+    newAuthorFormVisible = false;
+    newAuthorForm.Id = "temp-" + Guid.NewGuid();
+    contentItemForm.AuthorId = newAuthorForm.Id;
+    authorDropDownList.AddItems(new List<AuthorForm>() { newAuthorForm });
+    newAuthorForm = new();
+  }
+
+  public void CancelNewAuthor()
+  {
+    newAuthorFormVisible = false;
+  }
+
+  public void BeforeNewPublisherDialogOpen()
+  {
+    newPublisherForm = new();
+  }
+
+  public void SaveNewPublisher()
+  {
+    newPublisherFormVisible = false;
+    newPublisherForm.Id = "temp-" + Guid.NewGuid();
+    contentItemForm.PublisherId = newPublisherForm.Id;
+    publisherDropDownList.AddItems(new List<PublisherForm>() { newPublisherForm });
+    newPublisherForm = new();
+  }
+
+  public void CancelNewPublisher()
+  {
+    newPublisherFormVisible = false;
+  }
+
+  public async Task ActionBeginHandler(ActionEventArgs<ContentItem> args)
+  {
+    busy = true;
+
+    switch (args.RequestType)
+    {
+      case GridAction.Add:
+        await populateDropDowns();
+        contentItemForm = new();
+        break;
+      case GridAction.BeginEdit:
+        await populateDropDowns();
+        contentItemForm = new(contentItems.FirstOrDefault(ci => ci.Id == args.Data.Id));
+        break;
+    }
+  }
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    await JS.InvokeVoidAsync("preventGridFormSubmit");
+  }
+
+  public async Task ActionCompleteHandler(ActionEventArgs<ContentItem> args)
+  {
+    if (args.RequestType == GridAction.Delete)
+    {
+      await contentManager.Remove(args.Data.Id);
+    }
+
+    if (args.RequestType == GridAction.Save) {
+
+      var author =authorDropDownList.GetDataByValue(contentItemForm.AuthorId);
+      var publisher = publisherDropDownList.GetDataByValue(contentItemForm.PublisherId);
+
+      var contentItem = new ContentItem {
+        Id = contentItemForm.Id,
+        Title = contentItemForm.Title,
+        Url = new Uri(contentItemForm.Url),
+        Description = contentItemForm.Description,
+        Author = new Person {
+          Id = author.Id.StartsWith("temp-") ? null : author.Id,
+          FirstName = author.FirstName,
+          LastName = author.LastName,
+          Url = new Uri(author.Url),
+        },
+        Publisher = new Organization {
+          Id = publisher.Id.StartsWith("temp-") ? null : publisher.Id,
+          Name = publisher.Name,
+          Url = new Uri(publisher.Url),
+        },
+        PublishDate = contentItemForm.PublishDate,
+        Format = contentItemForm.Format,
+        Tags = contentItemForm.Tags.Select(t => t.Value).ToList(),
+        Active = contentItemForm.Active,
+      };
+
+      if (contentItem.Id is null)
+      {
+        await contentManager.Append(contentItem);
+      }
+      else
+      {
+        await contentManager.Replace(contentItem);
+      }
+
+      contentItems = (await contentManager.All()).ToList();
+      contentItemsGrid.Refresh();
+    }
+
+    busy = false;
+  }
+
+  private async Task populateDropDowns()
+  {
+    var authorModels = await contentManager.AllAuthors();
+    authors = authorModels.Select(p => new AuthorForm {
+      Id = p.Id,
+      FirstName = p.FirstName,
+      LastName = p.LastName,
+      Url = p.Url.ToString(),
+    }).Prepend(new AuthorForm {
+      Id = "<new author>",
+      FirstName = null,
+      LastName = null,
+      Url = null
+    }).ToList();
+
+    var publisherModels = await contentManager.AllPublishers();
+    publishers = publisherModels.Select(p => new PublisherForm {
+      Id = p.Id,
+      Name = p.Name,
+      Url = p.Url.ToString(),
+    }).Prepend(new PublisherForm {
+      Id = "<new publisher>",
+      Name = "New Publisher",
+      Url = null
+    }).ToList();
+
+    formats = (await contentManager.AllFormats()).ToList();
+    
+    tags = (await contentManager.AllTags())
+      .Select(tag => new Tag { Name = tag, Value = tag }).ToList();
+
+  }  
+
+  public class Tag {
+    public string Name { get; set; }
+    public string Value { get; set; }
+  }
+
+  public class AuthorForm {
+    public string Id { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Url { get; set; }
+    public string FullName {
+      get {
+        if (FirstName is null && LastName is null)
+        {
+          return "New Author";
+        }
+        else
+        {
+          return LastName + ", " + FirstName;
+        }
+      }
+    }
+  }
+
+  public class PublisherForm {
+    public string Id { get; set; }
+    public string Name { get; set; }
+    public string Url { get; set; }
+  }
+
+  public class ContentItemForm {
+    public string Id { get; set; }
+    public string Title { get; set; }
+    public string Url { get; set; }
+    public string Description { get; set; }
+    public string AuthorId { get; set; }
+    public string PublisherId { get; set; }
+    public DateTime PublishDate { get; set; }
+    public string Format { get; set; }
+    public List<Tag> Tags { get; set; }
+    public bool Active { get; set; }
+
+    public ContentItemForm()
+    {
+      Id = null;
+      Title = "";
+      Url = "";
+      Description = "";
+      AuthorId = null;
+      PublisherId = null;
+      PublishDate = DateTime.Now;
+      Tags = new();
+      Active = true;
+    }
+
+    public ContentItemForm(ContentItem contentItem)
+    {
+      Id = contentItem.Id;
+      Title = contentItem.Title;
+      Url = contentItem.Url.ToString();
+      Description = contentItem.Description;
+      AuthorId = contentItem.Author.Id;
+      PublisherId = contentItem.Publisher.Id;
+      PublishDate = contentItem.PublishDate;
+      Format = contentItem.Format;
+      Tags = contentItem.Tags.Select(t => new Tag { Name = t, Value = t }).ToList();
+      Active = contentItem.Active;
+    }
+  }
+
+}
+

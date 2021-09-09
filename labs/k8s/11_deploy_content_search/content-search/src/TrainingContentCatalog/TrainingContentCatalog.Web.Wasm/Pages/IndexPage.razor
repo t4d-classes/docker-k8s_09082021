@@ -1,0 +1,26 @@
+﻿@page "/"
+
+@using TrainingContentCatalog.Common;
+@using TrainingContentCatalog.Models;
+
+@inject ITrainingContentSearch trainingContentSearch;
+
+@using TrainingContentCatalog.Components.Search
+
+<SearchHeader />
+<SearchForm OnSearch="searchTrainingContent" />
+<SearchResultsList SearchResults="@searchResults" />
+
+@code {
+
+  private IEnumerable<ContentItem> searchResults { get; set; } = new List<ContentItem>();
+
+  private async void searchTrainingContent(string searchText)
+  {
+    searchResults = await trainingContentSearch.Search(searchText);
+    StateHasChanged();
+  }
+
+
+
+}

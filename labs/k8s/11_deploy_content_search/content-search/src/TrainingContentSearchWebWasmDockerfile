@@ -1,0 +1,25 @@
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
+
+WORKDIR /app
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Common/*.csproj ./TrainingContentCatalog/TrainingContentCatalog.Common/
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Components/*.csproj ./TrainingContentCatalog/TrainingContentCatalog.Components/
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Models/*.csproj ./TrainingContentCatalog/TrainingContentCatalog.Models/
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Web.Wasm/*.csproj ./TrainingContentCatalog/TrainingContentCatalog.Web.Wasm/
+
+WORKDIR /app/TrainingContentCatalog/TrainingContentCatalog.Web.Wasm
+RUN dotnet restore
+
+WORKDIR /app
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Common/ ./TrainingContentCatalog/TrainingContentCatalog.Common/
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Components/ ./TrainingContentCatalog/TrainingContentCatalog.Components/
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Models/ ./TrainingContentCatalog/TrainingContentCatalog.Models/
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Web.Wasm/ ./TrainingContentCatalog/TrainingContentCatalog.Web.Wasm/
+
+WORKDIR /app/TrainingContentCatalog/TrainingContentCatalog.Web.Wasm
+RUN dotnet publish -c Release -o /app/out
+
+FROM nginx:1.21.1-alpine
+
+COPY default.conf /etc/nginx/conf.d/default.conf
+
+COPY --from=build-env /app/out/wwwroot /usr/share/nginx/html

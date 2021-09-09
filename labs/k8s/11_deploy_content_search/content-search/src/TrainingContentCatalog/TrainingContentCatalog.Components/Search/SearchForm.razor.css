@@ -1,0 +1,18 @@
+.search-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-controls > * {
+  display: block;
+  margin: 4px;
+}
+
+.search-controls > label {
+  vertical-align: middle;
+}
+
+.search-controls > label > input {
+  margin-left: 2px;
+}

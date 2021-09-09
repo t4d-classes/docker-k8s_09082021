@@ -1,0 +1,11 @@
+
+
+GET https://localhost:5051/WeatherForecast HTTP/1.1
+
+###
+
+GET https://localhost:5051/TrainingContentSearch/C%23 HTTP/1.1
+
+###
+
+GET http://localhost:5080/ap HTTP/1.1

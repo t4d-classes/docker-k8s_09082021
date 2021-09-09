@@ -1,0 +1,44 @@
+@using System.ComponentModel.DataAnnotations;
+
+<EditForm Model="@searchForm" OnValidSubmit="@search">
+
+  <DataAnnotationsValidator />
+
+  <div class="search-controls">
+  
+    <label>
+      Search
+      <InputText @bind-Value="searchForm.SearchTextInput" />
+    </label>
+
+     <button type="submit" class="btn btn-primary">Search</button>
+
+  </div>
+
+  <div class="text-center">
+    <ValidationMessage For="() => searchForm.SearchTextInput" />
+  </div>
+
+</EditForm>
+
+@code {
+
+  [Parameter]
+  public EventCallback<string> OnSearch {get; set; }
+
+  SearchFormModel searchForm = new() {
+    SearchTextInput = "",
+  };
+
+  private async void search() {
+    await OnSearch.InvokeAsync(searchForm.SearchTextInput);
+  }
+
+  class SearchFormModel {
+
+    [Required(ErrorMessage = "The search field is required.")]
+    public string SearchTextInput { get; set; }
+
+  }
+
+}

@@ -1,0 +1,12 @@
+
+
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;;
+}
+
+.search-tool-logo {
+  width: 52px;
+  height: 52px;
+}

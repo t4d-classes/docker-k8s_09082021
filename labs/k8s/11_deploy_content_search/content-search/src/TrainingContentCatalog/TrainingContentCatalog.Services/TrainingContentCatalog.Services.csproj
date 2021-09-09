@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\TrainingContentCatalog.Models\TrainingContentCatalog.Models.csproj" />
+    <ProjectReference Include="..\TrainingContentCatalog.DataAccess\TrainingContentCatalog.DataAccess.csproj" />
+    <ProjectReference Include="..\TrainingContentCatalog.Common\TrainingContentCatalog.Common.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+</Project>

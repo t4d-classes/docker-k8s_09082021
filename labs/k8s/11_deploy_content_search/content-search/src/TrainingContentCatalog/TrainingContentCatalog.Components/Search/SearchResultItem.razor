@@ -1,0 +1,37 @@
+@using TrainingContentCatalog.Models;
+
+<li class="search-result">
+  <header>
+    <h3 class="search-result-title">
+      <a href="@SearchResult.Url" target="_blank">@SearchResult.Format: @SearchResult.Title</a>
+    </h3>
+    <div class="search-result-publish-data">
+      Published: @SearchResult.PublishDate.ToString("d"),
+      Author: <a href="@SearchResult.Author.Url" target="_blank">@SearchResult.Author.DisplayName</a>,
+      Publisher:  <a href="@SearchResult.Publisher.Url" target="_blank">@SearchResult.Publisher.Name</a>
+    </div>  
+  </header>
+  <p class="search-result-description">
+    @(SearchResult.Description.Length > maxDescriptionLength
+      ? SearchResult.Description.Substring(0, maxDescriptionLength) + "..."
+      : SearchResult.Description)
+    <a href="@SearchResult.Url" target="_blank">Learn more</a>
+  </p>
+  <ul class="tags">
+    @foreach(var tag in @SearchResult.Tags)
+    {
+      <li class="tag">
+        <span class="badge rounded-pill bg-primary">@tag</span>
+      </li>
+    }
+  </ul>
+</li>
+
+@code {
+
+  private int maxDescriptionLength = 60;
+
+  [Parameter]
+  public ContentItem SearchResult { get; set; }
+
+}

@@ -1,0 +1,14 @@
+@using TrainingContentCatalog.Models;
+
+<ol class="search-results">
+  @foreach(var searchResult in SearchResults) {
+    <SearchResultItem SearchResult="@searchResult" />
+  }
+</ol>
+
+@code {
+
+  [Parameter]
+  public IEnumerable<ContentItem> SearchResults { get; set; }
+
+}

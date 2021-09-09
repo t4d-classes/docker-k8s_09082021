@@ -1,0 +1,68 @@
+@inherits LayoutComponentBase
+
+<div id="wrapper">
+  <div class="col-lg-12 col-sm-12 col-md-12">
+    <div class="header-section dock-menu" id="header">
+      <ul class="header-list">
+        <li id="hamburger" class="icon-menu icon list" @onclick="@Toggle"></li>
+        <li class="right-header list">
+          <div class="horizontal-menu">
+            <SfMenu CssClass="dock-menu" TValue="MenuItem" Orientation="@Orientation">
+              <MenuItems>
+                <MenuItem Text="Support" Url="/admin/support"></MenuItem>
+                <MenuItem Text="Profile" Url="/admin/profile"></MenuItem>
+                @* <MenuItem Text="Sign out"></MenuItem> *@
+              </MenuItems>
+            </SfMenu>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <!-- sidebar element declaration -->
+    <SfSidebar HtmlAttributes="@HtmlAttribute" Target=".main-content" Width="220px" DockSize="50px" EnableDock="true" @ref="Sidebar" @bind-IsOpen="SidebarToggle">
+      <ChildContent>
+        <div class="main-menu">
+          <p class="main-menu-header">MAIN</p>
+          <div>
+            <SfMenu CssClass="dock-menu" TValue="MenuItem" Orientation="@VerOrientation">
+              <MenuItems>
+                <MenuItem Text="Content Tool" Url="/admin/content-tool"></MenuItem>
+              </MenuItems>
+            </SfMenu>
+          </div>
+        </div>
+        <div class="action">
+          <p class="main-menu-header">QUICK ACTIONS</p>
+          @* <a class="e-btn action-btn" id="action-button" href="/admin/content-tool">Add Content</a> *@
+        </div>
+      </ChildContent>
+    </SfSidebar>
+    <!-- end of sidebar element -->
+    <!-- main content declaration -->
+    <div class="main-content" id="maintext">
+      <div class="content">
+        @Body
+      </div>
+    </div>
+    <!--end of main content declaration -->
+  </div>
+</div>
+
+@code {
+  
+  SfSidebar Sidebar;
+
+  public Orientation Orientation = Orientation.Horizontal;
+  public Orientation VerOrientation = Orientation.Vertical;
+  public bool SidebarToggle = false;
+
+  Dictionary<string, object> HtmlAttribute = new()
+  {
+    { "class", "sidebar-menu" }
+  };
+
+  public void Toggle()
+  {
+    SidebarToggle = !SidebarToggle;
+  }
+}

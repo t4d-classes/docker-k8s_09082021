@@ -1,0 +1,30 @@
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-env
+
+WORKDIR /app
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Common/*.csproj ./TrainingContentCatalog/TrainingContentCatalog.Common/
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Components/*.csproj ./TrainingContentCatalog/TrainingContentCatalog.Components/
+COPY ./TrainingContentCatalog/TrainingContentCatalog.DataAccess/*.csproj ./TrainingContentCatalog/TrainingContentCatalog.DataAccess/
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Models/*.csproj ./TrainingContentCatalog/TrainingContentCatalog.Models/
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Services/*.csproj ./TrainingContentCatalog/TrainingContentCatalog.Services/
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Web.Server/*.csproj ./TrainingContentCatalog/TrainingContentCatalog.Web.Server/
+
+WORKDIR /app/TrainingContentCatalog/TrainingContentCatalog.Web.Server
+RUN dotnet restore
+
+WORKDIR /app
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Common/ ./TrainingContentCatalog/TrainingContentCatalog.Common/
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Components/ ./TrainingContentCatalog/TrainingContentCatalog.Components/
+COPY ./TrainingContentCatalog/TrainingContentCatalog.DataAccess/ ./TrainingContentCatalog/TrainingContentCatalog.DataAccess/
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Models/ ./TrainingContentCatalog/TrainingContentCatalog.Models/
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Services/ ./TrainingContentCatalog/TrainingContentCatalog.Services/
+COPY ./TrainingContentCatalog/TrainingContentCatalog.Web.Server/ ./TrainingContentCatalog/TrainingContentCatalog.Web.Server/
+
+WORKDIR /app/TrainingContentCatalog/TrainingContentCatalog.Web.Server
+RUN dotnet publish -c Release -o /app/out
+
+FROM mcr.microsoft.com/dotnet/aspnet:5.0
+
+WORKDIR /app
+COPY --from=build-env /app/out .
+
+ENTRYPOINT ["dotnet", "TrainingContentCatalog.Web.Server.dll"]
