@@ -7,13 +7,13 @@
 Download a Docker Image
 
 ```bash 
-docker pull IMAGE_ID
+docker pull IMAGE_NAME
 ```
 
  Download a tagged Docker Image
 
 ```bash
-docker pull IMAGE_ID:TAG_NAME
+docker pull IMAGE_NAME:TAG_NAME
 ```
 
 **Documentation**
@@ -31,13 +31,13 @@ docker image ls
 Remove Docker Image
 
 ```bash
-docker image rm IMAGE_ID
+docker image rm IMAGE_NAME
 ```
 
 Shorthand to Remove a Docker Image
 
 ```bash
-docker rmi IMAGE_ID
+docker rmi IMAGE_NAME
 ```
 
 **Documentation**
@@ -46,8 +46,135 @@ docker rmi IMAGE_ID
 - [Docker Image List Command Options](https://github.com/moby/moby/blob/10c0af083544460a2ddc2218f37dc24a077f7d90/docs/reference/commandline/images.md)
 - [Docker Remove Image Command](https://docs.docker.com/engine/reference/commandline/rmi/)
 
+### Tagging Docker Images
+
+Tag Docker Image
+
+```bash
+docker image tag IMAGE_NAME NEW_IMAGE_NAME:TAG_NAME
+```
+
+**Documentation**
+
+- [Docker Image Tag Command](https://docs.docker.com/engine/reference/commandline/image_tag/)
+
+### Publish a Docker Image to Docker Hub
+
+Docker Hub Login
+
+```bash
+docker login
+```
+
+Docker Hub Logout
+
+```bash
+docker logout
+```
+
+Push Image to Docker Hub
+
+```bash
+docker push IMAGE_NAME
+```
+
+Pull Image from Docker Hub
+
+```bash
+docker pull IMAGE_NAME
+```
+
+**Documentation**
+
+- [Docker Login Command](https://docs.docker.com/engine/reference/commandline/login/)
+- [Docker Logout Command](https://docs.docker.com/engine/reference/commandline/logout/)
+- [Docker Push Command](https://docs.docker.com/engine/reference/commandline/push/)
+- [Docker Pull Command](https://docs.docker.com/engine/reference/commandline/pull/)
+
 ## Containers
+
+### List Containers
+
+Docker Run Command
+
+```bash
+docker run -d --name CONTAINER_NAME IMAGE_NAME
+```
+
+Docker List Running Containers Command
+
+```bash
+docker ps
+```
+
+Docker List all Containers (Stopped and Running) Command
+
+```bash
+docker ps -a
+```
+
+**Documentation**
+
+- [Docker Run Command](https://docs.docker.com/engine/reference/commandline/run/)
+- [Docker List Containers Command](https://docs.docker.com/engine/reference/commandline/ps/)
+
+### Start and Stop Containers
+
+Docker Start Command
+
+```bash
+docker start CONTAINER_ID
+```
+
+```bash
+docker start CONTAINER_NAME
+```
+
+Docker Stop Command
+
+```bash
+docker stop CONTAINER_ID
+```
+
+```bash
+docker stop CONTAINER_NAME
+```
+
+**Documentation**
+
+- [Docker Start Command](https://docs.docker.com/engine/reference/commandline/start/)
+- [Docker Stop Command](https://docs.docker.com/engine/reference/commandline/stop/)
+
+### Remove Containers
+
+Docker Remove Command
+
+```bash
+docker rm CONTAINER_ID
+```
+
+```bash
+docker rm CONTAINER_NAME
+```
+
+Docker Force Remove Command
+
+```bash
+docker rm -f CONTAINER_ID
+```
+
+```bash
+docker rm -f CONTAINER_NAME
+```
+
+**Documentation**
+
+- [Docker Remove Container Command](https://docs.docker.com/engine/reference/commandline/rm/)
+
+
 
 ## Volumes
 
 ## Networks
+
+## Docker Compose
