@@ -1,4 +1,4 @@
-# Exercise #2 - Download Docker Images
+# Exercise #9 - Persistent Storage
 
 ## Lab Summary
 
