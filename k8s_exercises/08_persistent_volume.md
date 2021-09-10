@@ -78,7 +78,7 @@ env:
 - Container Name: pgadmin
 - Container Port: 80
 
-5. Under the `spec` property, below the `containera`, add the following YAML:
+5. Under the `spec` property, below the `containers`, add the following YAML:
 
 ```yaml
 volumes:
