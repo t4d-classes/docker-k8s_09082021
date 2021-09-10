@@ -294,4 +294,56 @@ docker run -d --name CONTAINER_NAME -p HOST_PORT:CONTAINER_PORT -v HOST_PATH:CON
 
 ## Networks
 
+### Docker Container Ports
+
+Docker Container Port Command
+
+```bash
+docker container port CONTAINER_NAME
+```
+
+**Documentation**
+
+- [Docker Container Port Command](https://docs.docker.com/engine/reference/commandline/container_port/)
+
+### Networking Containers
+
+Docker Network Inspect Command
+
+```bash
+docker network inspect NETWORK_NAME
+```
+
+Docker Network Create Command
+
+```bash
+docker network create NETWORK_NAME
+```
+
+Docker Network Remove Command
+
+```bash
+docker network rm NETWORK_NAME
+```
+
+Docker Network List Command
+
+```bash
+docker network ls
+```
+
+Docker Run with Network Option
+
+```bash
+docker run -d --name CONTAINER_NAME -p HOST_PORT:CONTAINER_PORT --network NETWORK_NAME IMAGE_NAME
+```
+
+**Documentation**
+
+- [Docker Network Inspect Command](https://docs.docker.com/engine/reference/commandline/network_inspect/)
+- [Docker Network Create Command](https://docs.docker.com/engine/reference/commandline/network_create/)
+- [Docker Network Remove Command](https://docs.docker.com/engine/reference/commandline/network_rm/)
+- [Docker Network List Command](https://docs.docker.com/engine/reference/commandline/network_ls/)
+
+
 ## Docker Compose
