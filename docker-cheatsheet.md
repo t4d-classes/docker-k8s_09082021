@@ -347,3 +347,46 @@ docker run -d --name CONTAINER_NAME -p HOST_PORT:CONTAINER_PORT --network NETWOR
 
 
 ## Docker Compose
+
+### Compose Up and Down
+
+Docker Compose Up Command
+
+```bash
+docker-compose up
+```
+
+Docker Compose Down Command
+
+```bash
+docker-compose down
+```
+
+**Documentation**
+
+- [Networking in Docker Compose](https://docs.docker.com/compose/environment-variables/)
+- [Docker Compose File: Ports](https://docs.docker.com/compose/compose-file/compose-file-v3/#ports)
+- [Docker Compose File: Networks](https://docs.docker.com/compose/compose-file/compose-file-v3/#networks)
+- [Docker Compose Up Command](https://docs.docker.com/compose/reference/up/)
+- [Docker Compose Down Command](https://docs.docker.com/compose/reference/down/)
+
+### Compose Build
+
+Docker Compose Build Command
+
+```bash
+docker-compose build
+```
+
+Docker Compose Build Command – Force Rebuild of All Containers
+
+```bash
+docker-compose build --force
+```
+
+**Documentation**
+
+- [Environment Variable in Docker Compose](https://docs.docker.com/compose/environment-variables/)
+- [Environment File](https://docs.docker.com/compose/env-file/)
+- [Docker Compose Build](https://docs.docker.com/compose/reference/build/)
+- [Docker Compose File Volumes](https://docs.docker.com/compose/compose-file/compose-file-v3/#volumes)
