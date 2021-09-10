@@ -1,4 +1,4 @@
-# Exercise #10 - Mongo Deployment
+# Exercise #9 - Mongo Deployment
 
 ## Steps
 
