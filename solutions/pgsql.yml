@@ -1,0 +1,125 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pgsql-pv-claim
+  labels:
+    app: pgsql-db
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pgadmin-pv-claim
+  labels:
+    app: pgsql-db
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgsql-deployment
+  labels:
+    app: pgsql-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: pgsql
+  template:
+    metadata:
+      labels:
+        pod: pgsql
+        app: pgsql-db
+    spec:
+      containers:
+      - name: pgsql
+        image: postgres:13.3-alpine
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 5432
+        volumeMounts:
+          - mountPath: /var/lib/postgresql
+            subPath: data
+            name: pgsql
+        env:
+          - name: POSTGRES_HOST_AUTH_METHOD
+            value: trust
+          - name: PGDATA
+            value: /var/lib/postgresql/data/pgdata
+      volumes:
+        - name: pgsql
+          persistentVolumeClaim:
+            claimName: pgsql-pv-claim
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin-deployment
+  labels:
+    app: pgsql-db
+spec:
+  spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: pgadmin
+  template:
+    metadata:
+      labels:
+        pod: pgadmin
+        app: pgsql-db
+    spec:
+      containers:
+        - name: pgadmin
+          image: dpage/pgadmin4:5.6
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /var/lib
+              subPath: pgadmin
+              name: pgadmin
+          env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              value: dbuser@pgadmin.local
+            - name: PGADMIN_DEFAULT_PASSWORD
+              value: dbpass
+      volumes:
+        - name: pgadmin
+          persistentVolumeClaim:
+            claimName: pgadmin-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: pgsql-db
+spec:
+  selector:
+    pod: pgsql
+  ports:
+    - port: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgadmin-www
+  labels:
+    app: pgsql-db
+spec:
+  type: NodePort
+  selector:
+    pod: pgadmin
+  ports:
+    - port: 80
