@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app1-deployment
+  labels:
+    app: node-app1
+spec:
+  selector:
+    matchLabels:
+      pod: node-app1-pod
+  template:
+    metadata:
+      labels:
+        app: node-app1
+        pod: node-app1-pod
+    spec:
+      containers:
+        - name: node-app
+          image: localhost:32000/node-app
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: app1config
+          # env:
+          #   - name: app_name
+          #     value: app1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app2-deployment
+  labels:
+    app: node-app2
+spec:
+  selector:
+    matchLabels:
+      pod: node-app2-pod
+  template:
+    metadata:
+      labels:
+        app: node-app2
+        pod: node-app2-pod
+    spec:
+      containers:
+        - name: node-app
+          image: localhost:32000/node-app
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            - name: app_name
+              valueFrom:
+                secretKeyRef:
+                  name: node-app
+                  key: app_name
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app3-deployment
+  labels:
+    app: node-app3
+spec:
+  selector:
+    matchLabels:
+      pod: node-app3-pod
+  template:
+    metadata:
+      labels:
+        app: node-app3
+        pod: node-app3-pod
+    spec:
+      containers:
+        - name: node-app
+          image: localhost:32000/node-app
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            - name: app_name
+              value: app3

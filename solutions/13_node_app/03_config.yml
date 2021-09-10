@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app1config
+  labels:
+    app: node-app1
+data:
+  app_name: app1-configmap
